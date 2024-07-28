@@ -98,7 +98,7 @@ def hyperparameter_tuning_grid(X_train, y_train, X_val, y_val, X_test, y_test, p
     test_score = []
     train_score = []
     for i in range(n_repeats):
-        grid_search = GridSearchCV(clf, param_grid, cv=5, scoring='r2')
+        grid_search = GridSearchCV(clf, param_grid, cv=n_splits, scoring='r2')
         grid_search.fit(X_val, y_val)
 
         best_score = grid_search.best_score_
