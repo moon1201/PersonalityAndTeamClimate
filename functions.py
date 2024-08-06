@@ -1,8 +1,36 @@
 import numpy as np
-from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 from sklearn.model_selection import train_test_split, RandomizedSearchCV, GridSearchCV
 
 
+def scale_data(X_train, X_test, y_train, y_test, scaler_X, scaler_Y):
+    # Fit and transform the training data
+    X_train = scaler_X.fit_transform(X_train)
+    y_train = scaler_Y.fit_transform(y_train)
+
+    # Transform the testing data using the same scalers
+    X_test = scaler_X.transform(X_test)
+    y_test = scaler_Y.transform(y_test)
+
+    return X_train, X_test, y_train, y_test
+def calculate_metrics(y_true, y_pred):
+    """Calculate MMRE, MAR, and Pred(25)"""
+    # Mean Magnitude of Relative Error (MMRE)
+    relative_errors = np.abs((y_true - y_pred) / y_true)
+    mmre = np.mean(relative_errors)
+
+    # Mean Absolute Residual (MAR)
+    residuals = np.abs(y_true - y_pred)
+    mar = np.mean(residuals)
+
+    # Percentage of predictions within 25% of actual values (Pred(25))
+    pred_25 = np.mean(relative_errors <= 0.25) * 100
+    r2 = r2_score(y_true, y_pred)
+    mae = mean_absolute_error(y_true, y_pred)
+    mse = mean_squared_error(y_true, y_pred)
+    rmse = np.sqrt(mean_squared_error(y_true, y_pred))
+
+    return mmre, mar, pred_25, r2, mae, mse, rmse
 def display(test, train, mse, r2):
     print(f'Mean Squared Error: {mse}')
     print(f'R^2 Score: {r2}')
